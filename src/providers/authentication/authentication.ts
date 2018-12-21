@@ -30,14 +30,10 @@ export class AuthenticationProvider {
   currentUser = function () {
     if (this.isLoggedIn()) {
       let token = this.getToken();
-      let name;
       let payload = JSON.parse(window.atob(token.split('.')[1]));
-      if (payload.givenName && payload.familyName) {
-        name = payload.givenName.substring(0, 1) + payload.familyName;
-      } else name = payload.profile.email.substring(0, payload.profile.email.indexOf('@'));
       return {
-        email: payload.profile.email,
-        name: name
+        email: payload.email,
+        name: payload.name
       };
     }
   };
