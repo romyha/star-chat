@@ -1,23 +1,54 @@
 <ion-header>
-  <ion-navbar>
-    <button ion-button menuToggle>
-      <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title>List</ion-title>
-  </ion-navbar>
+  <nav title="Stars"></nav>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
-      <ion-icon [name]="item.icon" item-start></ion-icon>
-      {{item.title}}
-      <div class="item-note" item-end>
-        {{item.note}}
-      </div>
+    <ion-list-header>
+      <ion-grid>
+        <ion-row>
+          <ion-col col-7 class="vertical-align">
+            <div>
+              Star
+            </div>
+          </ion-col>
+          <ion-col class="vertical-align">
+            <div>
+              Price
+            </div>
+          </ion-col>
+          <ion-col class="vertical-align">
+            <div>
+              Avg response
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-list-header>
+    <button ion-item *ngFor="let star of stars" (click)="itemTapped($event, star)">
+      <ion-grid>
+        <ion-row>
+          <ion-col col-7 class="vertical-align">
+            <ion-avatar item-start>
+              <img [src]="star.picsrc">
+            </ion-avatar>
+            <div>{{star.name}}</div>
+          </ion-col>
+          <ion-col class="vertical-align">
+            <div>
+              {{star.price}} €
+            </div>
+          </ion-col>
+          <ion-col class="vertical-align">
+            <div>
+              {{star.responseTime}}
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </button>
   </ion-list>
-  <div *ngIf="selectedItem" padding>
-    You navigated here from <b>{{selectedItem.title}}</b>
+  <div *ngIf="selectedStar" padding>
+    You navigated here from <b>{{selectedStar.name}}</b>
   </div>
 </ion-content>
