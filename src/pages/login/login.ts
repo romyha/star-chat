@@ -5,6 +5,9 @@ import { AuthenticationProvider } from '../../providers/authentication/authentic
 import { RegisterPage } from '../register/register';
 import { ListPage } from '../list/list';
 import { AlertController } from 'ionic-angular';
+import { UniqueDeviceID } from '@ionic-native/unique-device-id';
+import { Firebase } from '@ionic-native/firebase';
+import { Platform } from 'ionic-angular';
 
 /**
  * Generated class for the LoginPage page.
@@ -21,19 +24,50 @@ import { AlertController } from 'ionic-angular';
 export class LoginPage {
   log: String;
   loginData: any = {};
+  deviceId: String;
+  token: String;
 
-  constructor(private alertCtrl: AlertController, public navCtrl: NavController, public navParams: NavParams, public authentication: AuthenticationProvider) {
+  constructor(private platform: Platform, 
+    public firebaseNative:Firebase, private uuid: UniqueDeviceID, private alertCtrl: AlertController, public navCtrl: NavController, public navParams: NavParams, public authentication: AuthenticationProvider) {
+    this.getToken().then(function (token) {
+      this.token = token;
+      console.log('thistoken', this.token);
+    }.bind(this)).catch((err) => {
+      console.log(err);
+    });
+    this.uuid.get()
+      .then(function (uuid) { this.deviceId = uuid; }.bind(this)).catch((error) => console.log(error));
   }
+
+  async getToken() {
+    let token;
+
+    if (this.platform.is('android')) {
+      token = await this.firebaseNative.getToken()
+    }
+
+    if (this.platform.is('ios')) {
+      token = await this.firebaseNative.getToken();
+      await this.firebaseNative.grantPermission();
+    }
+    console.log(token);
+    return token;
+  };
 
   doLogin = function () {
     this.log = "";
+    
     this.authentication.login({
+      token: this.token,
+      deviceId: this.deviceId,
       email: this.loginData.username,
       password: this.loginData.password
-    }).then(function () {
+    }).then(function (resp) {
+      console.log(resp);
       this.isLoggedIn = this.authentication.isLoggedIn();
       this.navCtrl.setRoot(ListPage);
     }.bind(this), function (err) {
+      console.log(err);
       this.alertCtrl.create({
         title: 'Failed to login',
         subTitle: JSON.parse(err.error).message,

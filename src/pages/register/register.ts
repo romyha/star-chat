@@ -25,7 +25,7 @@ export class RegisterPage {
 
   register() {
     this.authentication.register(this.user).then(data => {
-      this.navCtrl.push(ListPage);
+      this.navCtrl.setRoot(ListPage);
     });
   }
 

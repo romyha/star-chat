@@ -9,6 +9,9 @@ import { RegisterPage } from '../pages/register/register';
 import { LoginPage } from '../pages/login/login';
 
 import { AuthenticationProvider } from '../providers/authentication/authentication';
+import { Push, PushObject, PushOptions } from '@ionic-native/push';
+import { HTTP } from '@ionic-native/http';
+import * as Constants from './constants';
 
 @Component({
   templateUrl: 'app.html'
@@ -18,9 +21,12 @@ export class MyApp {
 
   rootPage: any = HomePage;
 
-  pages: Array<{title: string, component: any}>;
+  pages: Array<{ title: string, component: any }>;
+  options: PushOptions;
+  pushObject: PushObject;
+  regID: any;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public authentication: AuthenticationProvider) {
+  constructor(private http: HTTP, private push: Push, public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public authentication: AuthenticationProvider) {
     if (!this.authentication.isLoggedIn()) {
       this.rootPage = LoginPage;
     }
@@ -32,6 +38,32 @@ export class MyApp {
       { title: 'List', component: ListPage }
     ];
 
+    this.options = {
+      android: {},
+      ios: {
+        alert: 'true',
+        badge: true,
+        sound: 'false'
+      }
+    };
+
+    this.pushObject = this.push.init(this.options);
+    
+    this.pushObject.on('notification').subscribe((notification) => {
+      alert('notification');
+        this.http.get(Constants.API_URL + 'stars/TomHanks', {}, { Authorization: 'Bearer ' + this.authentication.getToken() }).then(data => {
+          console.log(data);
+          this.nav.setRoot('StarPage', {
+          star: data[0]
+        });
+      }, err => {
+        console.log(err);
+      }).catch(err => {
+        console.log(err);
+      });
+
+
+    });
   }
 
   initializeApp() {
@@ -40,12 +72,12 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      
+
     });
 
   }
 
-  logout = function() {
+  logout = function () {
     this.authentication.logout();
     this.nav.setRoot(LoginPage);
   }

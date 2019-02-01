@@ -15,11 +15,11 @@ export class AuthenticationProvider {
   }
 
   saveToken = function (token) {
-    localStorage.setItem('inventory-token', token);
+    localStorage.setItem('starchat-token', token);
   };
 
   getToken = function () {
-    return localStorage.getItem('inventory-token');
+    return localStorage.getItem('starchat-token');
   };
 
   isLoggedIn = function () {
@@ -33,7 +33,8 @@ export class AuthenticationProvider {
       let payload = JSON.parse(window.atob(token.split('.')[1]));
       return {
         email: payload.email,
-        name: payload.name
+        name: payload.name,
+        token: payload.token
       };
     }
   };
@@ -55,6 +56,6 @@ export class AuthenticationProvider {
   };
 
   logout = function () {
-    localStorage.removeItem('inventory-token');
+    localStorage.removeItem('starchat-token');
   }
 }

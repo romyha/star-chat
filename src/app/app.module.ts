@@ -23,6 +23,12 @@ import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 import { AuthenticationProvider } from '../providers/authentication/authentication';
 import { SOCKET_URL } from './constants';
 const config: SocketIoConfig = { url: SOCKET_URL, options: {} };
+import { UniqueDeviceID } from '@ionic-native/unique-device-id';
+import { Push, PushObject } from '@ionic-native/push';
+import { Firebase } from '@ionic-native/firebase';
+
+import { AngularFireModule } from 'angularfire2';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
 
 @NgModule({
   declarations: [
@@ -36,6 +42,8 @@ const config: SocketIoConfig = { url: SOCKET_URL, options: {} };
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    AngularFireModule.initializeApp(config), 
+    AngularFirestoreModule,
     SocketIoModule.forRoot(config),
     HttpClientModule,
     IonicStorageModule.forRoot()
@@ -54,9 +62,12 @@ const config: SocketIoConfig = { url: SOCKET_URL, options: {} };
     InAppBrowser,
     StatusBar,
     SplashScreen,
+    Firebase,
     {provide: BrowserXhr, useClass:CustExtBrowserXhr},
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    AuthenticationProvider
+    AuthenticationProvider,
+    UniqueDeviceID,
+    Push
   ]
 })
 export class AppModule {}
